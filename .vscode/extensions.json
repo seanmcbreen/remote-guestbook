@@ -1,6 +1,5 @@
 {
     "recommendations": [
-        "googlecloudtools.cloudcode",
         "ms-vscode-remote.remote-containers"
     ] 
 }
