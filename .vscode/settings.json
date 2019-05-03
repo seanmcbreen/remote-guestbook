@@ -1,0 +1,8 @@
+{
+    "cloudcode.profile-cluster-map": {
+        "[default]": "gke_seanmcb-test_us-west1_pm-monthly-demo"
+    },
+    "cloudcode.image-registry": {
+        "name": "gcr.io/seanmcb-test"
+    }
+}

@@ -1,0 +1,17 @@
+// See https://aka.ms/vscode-remote/containers for the
+// documentation about the devcontainer.json format
+{
+	"name": "Cloud Code",
+	"dockerFile": "Dockerfile",
+	"extensions": [
+		"peterjausovec.vscode-docker",
+		"GoogleCloudTools.cloudcode",
+		"ms-vscode.vscode-typescript-tslint-plugin"
+	],
+	"runArgs": [
+		"-e",
+		"SYNC_LOCALHOST_KUBECONFIG=true",
+		"-v",
+		"/var/run/docker.sock:/var/run/docker.sock"
+	]
+}

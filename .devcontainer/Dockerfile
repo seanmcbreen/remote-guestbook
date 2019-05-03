@@ -1,0 +1,77 @@
+#-------------------------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
+#-------------------------------------------------------------------------------------------------------------
+
+# You can use any Debian/Ubuntu based image as abase
+FROM node:lts
+
+# Copy settings file so Docker extension is installed inside the container
+COPY settings.vscode.json /root/.vscode-remote/data/Machine/settings.json
+
+# Configure apt
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+    && apt-get -y install --no-install-recommends apt-utils 2>&1
+
+# Remove outdated yarn from /opt and install via package 
+# so it can be easily updated via apt-get upgrade yarn
+RUN rm -rf /opt/yarn-* \
+    rm -f /usr/local/bin/yarn \
+    rm -f /usr/local/bin/yarnpkg \
+    && apt-get install -y curl apt-transport-https lsb-release \
+    && curl -sS https://dl.yarnpkg.com/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/pubkey.gpg | apt-key add - 2>/dev/null \
+    && echo "deb https://dl.yarnpkg.com/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+    && apt-get update \
+    && apt-get -y install --no-install-recommends yarn
+
+# Install tslint and typescript
+RUN npm install -g tslint typescript
+
+# Verify git, process tools installed
+RUN apt-get -y install git procps
+
+# Install Docker CE CLI
+RUN apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common lsb-release \
+    && curl -fsSL https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/gpg | (OUT=$(apt-key add - 2>&1) || echo $OUT) \
+    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]') $(lsb_release -cs) stable" \
+    && apt-get update \
+    && apt-get install -y docker-ce-cli
+
+ENV CLOUD_SDK_VERSION 237.0.0
+
+RUN export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" \
+    && echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" > /etc/apt/sources.list.d/google-cloud-sdk.list \
+    && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - \
+    && apt-get update \
+    && apt-get install -y google-cloud-sdk=${CLOUD_SDK_VERSION}-0 \
+        kubectl \
+    && gcloud --quiet config set core/disable_usage_reporting true \
+    && gcloud --quiet config set component_manager/disable_update_check true \
+    && gcloud --quiet config set metrics/environment github_docker_image 
+
+# https://cloud.google.com/sdk/docs/authorizing#authorizing_with_a_service_account
+# echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+    #&& gcloud --quiet config set project seanmcb-test \
+    #&& gcloud --quiet config set compute/zone us-west1
+
+
+# Install Skaffold
+RUN curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 \
+    && chmod +x skaffold \
+    && mv skaffold /usr/local/bin
+
+RUN skaffold config set --global default-repo gcr.io/seanmcb-test
+
+# Install Helm
+RUN curl -s https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash -
+
+# Copy localhost's ~/.kube/config file into the container and swap out localhost
+# for host.docker.internal whenever a new shell starts to keep them in sync.
+# run
+
+# Clean up
+RUN apt-get autoremove -y \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/*
+ENV DEBIAN_FRONTEND=dialog
