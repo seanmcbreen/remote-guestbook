@@ -6,7 +6,8 @@
 	"extensions": [
 		"peterjausovec.vscode-docker",
 		"GoogleCloudTools.cloudcode",
-		"ms-vscode.vscode-typescript-tslint-plugin"
+		"ms-vscode.vscode-typescript-tslint-plugin",
+		"IBM.output-colorizer"
 	],
 	"runArgs": [
 		"-e",
