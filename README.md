@@ -2,6 +2,8 @@
 
 This is a quick experiment to see how easily our Cloud Code extension works w/ the newly announced [Remote Development](https://code.visualstudio.com/blogs/2019/05/02/remote-development) Support in VS Code.
 
+**Tip:** Github does nto support arbitary protocol handlers in `README.md` if that was supported a sinple link such as `vscode://vscode.git/clone?url=https://github.com/seanmcbreen/remote-guestbook.git` would open VS Code and take care of everything else for the user 'with a couple of prompts'.  This can be used on other web pages you own.
+
 ## What's the point
 Several things are cool here:
 1. A user to fire up the sample with minimal set-up steps
