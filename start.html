@@ -1,0 +1,66 @@
+<HTML>
+<HEAD>
+<style>
+    body {
+        background-color: rgb(239, 245, 245);
+        font-family: verdana;
+    }
+
+    h1 {
+        color: blue;
+    }
+</style>
+</HEAD>
+
+<BODY>
+<H1>Amazing Demo</H1>
+
+<p>
+    Open in
+    <a href="vscode://vscode.git/clone?url=https://github.com/seanmcbreen/remote-guestbook.git">
+        Open in Cloud Code
+    </a>
+</p>
+
+<h2>What Happened</h2>
+<p>
+    With a single click [well set of them] I can:
+    <ul>
+        <li> Open Visual Studio Code
+        <li> Clone a specified Git repo
+        <li> Have that recommend 'remote development'
+        <li> Have that configure the 'remote machine'
+        <li> Start working...
+    </ul>
+
+    <h2>How did it Happen</h2>
+    VS Code has a feature called 'remote development' which allows the front end to connect to a remote back-end
+    for all the tools engine tasks. For instance this covers:
+
+    <ul>
+        <li>File system
+        <li>Extensions
+        <li>Code Indexing
+        <li>Language Services
+        <li>Terminal
+        <li>Debuggers
+        <li>Developer Tool Chain
+    </ul>
+
+    The remote machine can either be pre-configured and you SSH into it e.g. Cloud Shell. Or you can dynamically create
+    a Docker image (or download one). In this case I used a docker image which installs:
+    <ul>
+        <li>Latest node:lts image
+        <li>The cloud code and docker extensions
+        <li>Adds npm, typescript and tslint
+        <li>Installs git
+        <li>installs Docker CE
+        <li>installs GCloud and kubectl
+        <li>Installs skaffold
+        <li>Installs helm
+    </ul>
+    ... as a result the user simply connects to GCP (via gcloud init) and everything just works.  
+</p>
+
+</BODY>
+</HTML>
