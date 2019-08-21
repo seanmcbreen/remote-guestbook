@@ -38,6 +38,7 @@ RUN apt-get install -y apt-transport-https ca-certificates curl gnupg-agent soft
     && apt-get update \
     && apt-get install -y docker-ce-cli
 
+ENV CLOUD_SDK_VERSION 237.0.0
 
 RUN export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" \
     && echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" > /etc/apt/sources.list.d/google-cloud-sdk.list \
