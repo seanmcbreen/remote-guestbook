@@ -38,7 +38,6 @@ RUN apt-get install -y apt-transport-https ca-certificates curl gnupg-agent soft
     && apt-get update \
     && apt-get install -y docker-ce-cli
 
-ENV CLOUD_SDK_VERSION 237.0.0
 
 RUN export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" \
     && echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" > /etc/apt/sources.list.d/google-cloud-sdk.list \
@@ -55,6 +54,35 @@ RUN export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" \
     #&& gcloud --quiet config set project seanmcb-test \
     #&& gcloud --quiet config set compute/zone us-west1
 
+# COPY localhost's ~/.kube/config file into the container and swap out localhost
+# for host.docker.internal whenever a new shell starts to keep them in sync.
+
+RUN echo '\n\
+if [ "$SYNC_LOCALHOST_KUBECONFIG" == "true" ]; then\n\
+    mkdir -p $HOME/.kube\n\
+    cp -r $HOME/.kube-localhost/* $HOME/.kube\n\
+    sed -i -e "s/localhost/host.docker.internal/g" $HOME/.kube/config\n\
+\n\
+fi' \
+>> $HOME/.bashrc
+
+# Copy gcloud config from the host
+RUN echo '\n\
+if [ "$SYNC_LOCALHOST_GCLOUD" == "true" ]; then\n\
+    mkdir -p $HOME/.config/gcloud\n\
+    cp -r $HOME/.gcloud-localhost/* $HOME/.config/gcloud\n\
+\n\
+fi' \
+>> $HOME/.bashrc
+
+RUN echo '\n\
+if [ "$SYNC_LOCALHOST_SSH" == "true" ]; then\n\
+    mkdir -p ~/.ssh\n\
+    cp -r ~/.ssh-localhost/* ~/.ssh\n\
+    chmod 700 ~/.ssh \n\
+    chmod 600 ~/.ssh/*\n\
+fi' \
+>> $HOME/.bashrc
 
 # Install Skaffold
 RUN curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 \
