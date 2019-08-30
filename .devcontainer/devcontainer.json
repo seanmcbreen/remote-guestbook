@@ -15,9 +15,9 @@
 		"--mount", "type=bind,source=${env:HOME}${env:USERPROFILE}/.ssh,target=/root/.ssh-localhost",
 		"--mount", "type=bind,source=${env:HOME}${env:USERPROFILE}/.kube,target=/root/.kube-localhost",
 		"--mount", "type=bind,source=${env:HOME}${env:USERPROFILE}/.config/gcloud,target=/root/.gcloud-localhost",
-		"-e", "SYNC_LOCALHOST_KUBECONFIG=true",
-		"-e", "SYNC_LOCALHOST_GCLOUD=true",
-		"-e", "SYNC_LOCALHOST_SSH=true",
+		//"-e", "SYNC_LOCALHOST_KUBECONFIG=true",
+		//"-e", "SYNC_LOCALHOST_GCLOUD=true",
+		//"-e", "SYNC_LOCALHOST_SSH=true",
 		"--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined"
 	],
 	"postCreateCommand": "gcloud info",
